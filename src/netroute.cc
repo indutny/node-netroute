@@ -55,16 +55,7 @@ Handle<Value> Netroute::GetGateway(const Arguments& args) {
 
   // XXX: Support ip6 there
   // Set destination
-  if (args.Length() == 0) {
-    *dest = uv_ip4_addr("8.8.8.8", 0);
-  } else if (args.Length() >= 1 && args[0]->IsString()) {
-    String::Utf8Value v(args[0].As<String>());
-    *dest = uv_ip4_addr(*v, 0);
-  } else {
-    free(msg);
-    return scope.Close(ThrowException(String::New(
-        "Incorrect input data!")));
-  }
+  *dest = uv_ip4_addr("8.8.8.8", 0);
 
   // Send message to kernel
   ssize_t written = write(r->fd_, msg, msg->rtm_msglen);

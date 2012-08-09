@@ -5,7 +5,7 @@ Route table bindings for node.js
 ## Usage
 
 ```javascript
-require('netroute').getGateway(/* optional ip there */); // 192.168.1.1
+require('netroute').getGateway(); // 192.168.1.1
 ```
 
 ### License
