@@ -13,4 +13,9 @@ describe('netroute', function() {
       assert(typeof item.destination === 'string');
     });
   });
+
+  it('should get gateway address', function() {
+    var gateway = netroute.getGateway();
+    assert(net.isIP(gateway));
+  });
 });
