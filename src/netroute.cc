@@ -18,8 +18,6 @@ static Persistent<String> dest_sym;
 static Persistent<String> gateway_sym;
 static Persistent<String> netmask_sym;
 static Persistent<String> genmask_sym;
-static Persistent<String> ifp_sym;
-static Persistent<String> ifa_sym;
 static Persistent<String> interface_sym;
 static Persistent<String> mtu_sym;
 static Persistent<String> rtt_sym;
@@ -51,12 +49,12 @@ static Handle<Value> GetInfo(int family) {
   sockaddr_in* addrs[1024];
   char out[256];
 
-  int flags[6] = { RTA_DST, RTA_GATEWAY, RTA_NETMASK,
-                   RTA_GENMASK, RTA_IFP, RTA_IFA };
-  int indexes[6] = { RTAX_DST, RTAX_GATEWAY, RTAX_NETMASK,
-                     RTAX_GENMASK, RTAX_IFP, RTAX_IFA };
-  Persistent<String> keys[6] = { dest_sym, gateway_sym, netmask_sym,
-                                 genmask_sym, ifp_sym, ifa_sym };
+  int flags[4] = { RTA_DST, RTA_GATEWAY, RTA_NETMASK,
+                   RTA_GENMASK };
+  int indexes[4] = { RTAX_DST, RTAX_GATEWAY, RTAX_NETMASK,
+                     RTAX_GENMASK };
+  Persistent<String> keys[4] = { dest_sym, gateway_sym, netmask_sym,
+                                 genmask_sym };
 
   int i = 0;
   while (current < addresses + size) {
@@ -89,7 +87,7 @@ static Handle<Value> GetInfo(int family) {
     }
 
     // Put every socket address into object
-    for (int j = 0; j < 6; j++) {
+    for (int j = 0; j < 4; j++) {
       if ((msg->rtm_addrs & flags[j]) == 0) continue;
 
       sockaddr_in* addr = addrs[indexes[j]];
@@ -144,8 +142,6 @@ static void Init(Handle<Object> target) {
   gateway_sym = Persistent<String>::New(String::NewSymbol("gateway"));
   netmask_sym = Persistent<String>::New(String::NewSymbol("netmask"));
   genmask_sym = Persistent<String>::New(String::NewSymbol("genmask"));
-  ifp_sym = Persistent<String>::New(String::NewSymbol("interfaceName"));
-  ifa_sym = Persistent<String>::New(String::NewSymbol("interfaceAddr"));
   interface_sym = Persistent<String>::New(String::NewSymbol("interface"));
   mtu_sym = Persistent<String>::New(String::NewSymbol("mtu"));
   rtt_sym = Persistent<String>::New(String::NewSymbol("rtt"));
