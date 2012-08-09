@@ -1,4 +1,5 @@
 #include "node.h"
+#include "netroute.h"
 
 #include <errno.h>
 #include <sys/types.h>
