@@ -1,6 +1,6 @@
 {
   "name": "netroute",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "main": "lib/netroute",
   "author": "Fedor Indutny <fedor@indutny.com>",
   "homepage": "https://github.com/indutny/node-netroute",
