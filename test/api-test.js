@@ -5,9 +5,10 @@ var netroute = require('..'),
 describe('netroute', function() {
   it('should get routing table', function() {
     var info = netroute.getInfo();
-    assert(Array.isArray(info));
+    assert(Array.isArray(info.IPv4));
+    assert(Array.isArray(info.IPv6));
 
-    info.forEach(function(item) {
+    info.IPv4.forEach(function(item) {
       assert(typeof item.interface === 'string');
       assert(typeof item.destination === 'string');
     });

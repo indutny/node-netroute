@@ -12,6 +12,8 @@ namespace netroute {
 using namespace node;
 using namespace v8;
 
+static Persistent<String> ip4_sym;
+static Persistent<String> ip6_sym;
 static Persistent<String> dest_sym;
 static Persistent<String> gateway_sym;
 static Persistent<String> netmask_sym;
@@ -22,14 +24,13 @@ static Persistent<String> interface_sym;
 static Persistent<String> mtu_sym;
 static Persistent<String> rtt_sym;
 static Persistent<String> expire_sym;
-static Persistent<String> pksent_sym;
 
 
-static Handle<Value> GetInfo(const Arguments& args) {
+static Handle<Value> GetInfo(int family) {
   HandleScope scope;
   Local<Array> result = Array::New();
 
-  int mib[6] = { CTL_NET, PF_ROUTE, 0, 0, NET_RT_DUMP, 0 };
+  int mib[6] = { CTL_NET, PF_ROUTE, 0, family, NET_RT_DUMP, 0 };
   size_t size;
   char* addresses;
 
@@ -60,6 +61,12 @@ static Handle<Value> GetInfo(const Arguments& args) {
   int i = 0;
   while (current < addresses + size) {
     rt_msghdr* msg = reinterpret_cast<rt_msghdr*>(current);
+
+    // Skip cloned routes
+    if (msg->rtm_flags & RTF_WASCLONED) {
+      current += msg->rtm_msglen;
+      continue;
+    }
 
     Local<Object> info = Object::New();
 
@@ -98,7 +105,6 @@ static Handle<Value> GetInfo(const Arguments& args) {
     info->Set(mtu_sym, Number::New(msg->rtm_rmx.rmx_mtu));
     info->Set(rtt_sym, Number::New(msg->rtm_rmx.rmx_rtt));
     info->Set(expire_sym, Number::New(msg->rtm_rmx.rmx_expire));
-    info->Set(pksent_sym, Number::New(msg->rtm_rmx.rmx_pksent));
 
     // Put interface name
     char iface[IFNAMSIZ];
@@ -118,9 +124,22 @@ static Handle<Value> GetInfo(const Arguments& args) {
 }
 
 
+static Handle<Value> GetInfo(const Arguments& args) {
+  HandleScope scope;
+  Local<Object> result = Object::New();
+
+  result->Set(ip4_sym, GetInfo(AF_INET));
+  result->Set(ip6_sym, GetInfo(AF_INET6));
+
+  return scope.Close(result);
+}
+
+
 static void Init(Handle<Object> target) {
   HandleScope scope;
 
+  ip4_sym = Persistent<String>::New(String::NewSymbol("IPv4"));
+  ip6_sym = Persistent<String>::New(String::NewSymbol("IPv6"));
   dest_sym = Persistent<String>::New(String::NewSymbol("destination"));
   gateway_sym = Persistent<String>::New(String::NewSymbol("gateway"));
   netmask_sym = Persistent<String>::New(String::NewSymbol("netmask"));
@@ -131,7 +150,6 @@ static void Init(Handle<Object> target) {
   mtu_sym = Persistent<String>::New(String::NewSymbol("mtu"));
   rtt_sym = Persistent<String>::New(String::NewSymbol("rtt"));
   expire_sym = Persistent<String>::New(String::NewSymbol("expire"));
-  pksent_sym = Persistent<String>::New(String::NewSymbol("pksent"));
 
   NODE_SET_METHOD(target, "getInfo", GetInfo);
 }

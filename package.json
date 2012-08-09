@@ -9,7 +9,6 @@
     "url": "http://github.com/indutny/node-netroute.git"
   },
   "dependencies": {
-    "node-gyp": "~0.6.3",
     "bindings": "~1.0.0"
   },
   "devDependencies": {
