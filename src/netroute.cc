@@ -60,6 +60,10 @@ Handle<Value> Netroute::GetGateway(const Arguments& args) {
   } else if (args.Length() >= 1 && args[0]->IsString()) {
     String::Utf8Value v(args[0].As<String>());
     *dest = uv_ip4_addr(*v, 0);
+  } else {
+    free(msg);
+    return scope.Close(ThrowException(String::New(
+        "Incorrect input data!")));
   }
 
   // Send message to kernel
