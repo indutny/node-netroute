@@ -5,7 +5,33 @@ Route table bindings for node.js
 ## Usage
 
 ```javascript
-require('netroute').getGateway(); // 192.168.1.1
+// Get routes list
+require('netroute').getInfo();
+/*
+ Returns object:
+   {
+     "IPv4": [{
+        "destination": "0.0.0.0",
+        "gateway": "192.168.10.1",
+        "netmask": "124.0.5.4",
+        "mtu": 1500,
+        "rtt": 0,
+        "expire": 0,
+        "interface": "en1"
+     }, ...],
+     "IPv6": [{
+       ...
+     }, ...]
+   }
+
+  Note: fields may differ on different platforms
+  (though gateway, destination, netmask and interface should be always
+   available).
+*/
+
+
+// Get default gateway
+require('netroute').getGateway(/* optional interface */); // 192.168.1.1
 ```
 
 ### License
