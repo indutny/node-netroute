@@ -95,7 +95,8 @@ Handle<Value> GetRoutesIPv4() {
                         &mtu,
                         &window,
                         &rtt);
-    ASSERT(nitems == 11);
+    if (nitems != 11)
+      break;
 
     char buf[256];
     Local<Object> route = Object::New();
@@ -154,7 +155,8 @@ Handle<Value> GetRoutesIPv6() {
                         &use,
                         &flags,
                         iface);
-    ASSERT(nitems == 10);
+    if (nitems != 10)
+      break;
 
     char buf[256];
     Hex2Bin(dst, 32);
