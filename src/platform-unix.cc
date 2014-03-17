@@ -2,6 +2,7 @@
 #include "netroute.h"
 
 #include <errno.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/sysctl.h>
@@ -50,10 +51,12 @@ Handle<Value> GetInfo(int family) {
     rt_msghdr* msg = reinterpret_cast<rt_msghdr*>(current);
 
     // Skip cloned routes
+#ifdef RTF_WASCLONED
     if (msg->rtm_flags & RTF_WASCLONED) {
       current += msg->rtm_msglen;
       continue;
     }
+#endif
 
     Local<Object> info = Object::New();
 
