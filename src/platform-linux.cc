@@ -1,6 +1,7 @@
 #include "node.h"
 #include "node_object_wrap.h"
 #include "netroute.h"
+#include "nan.h"
 
 #include <assert.h>
 #include <errno.h>
@@ -30,15 +31,6 @@ using namespace v8;
   }                                                                           \
   while (0)
 
-#define THROW(s)                                                              \
-  do {                                                                        \
-    v8::Local<v8::String> errmsg = v8::String::New((s));                      \
-    v8::Local<v8::Value> ex = v8::Exception::Error(errmsg);                   \
-    return v8::ThrowException(ex);                                            \
-  }                                                                           \
-  while (0)
-
-
 unsigned int hex2bin(unsigned char c) {
   if (c >= '0' && c <= '9') return c - '0';
   if (c >= 'A' && c <= 'F') return 10 + (c - 'A');
@@ -58,12 +50,9 @@ void Hex2Bin(char* buf, unsigned int len) {
 }
 
 
-Handle<Value> GetRoutesIPv4() {
-  HandleScope scope;
-  Local<Array> routes = Array::New();
-
+static bool GetRoutesIPv4(Handle<Value> routes) {
   FILE* fp = fopen("/proc/net/route", "r");
-  if (fp == NULL) return scope.Close(routes);
+  if (fp == NULL) return false;
 
   char buf[1024];
   char* s = fgets(buf, sizeof(buf), fp); // skip the first line
@@ -99,37 +88,34 @@ Handle<Value> GetRoutesIPv4() {
       break;
 
     char buf[256];
-    Local<Object> route = Object::New();
-    route->Set(interface_sym,
-               String::New(reinterpret_cast<const char*>(iface)));
-    route->Set(dest_sym,
-               String::New(inet_ntop(AF_INET, &dst, buf, sizeof(buf))));
-    route->Set(gateway_sym,
-               String::New(inet_ntop(AF_INET, &gateway, buf, sizeof(buf))));
-    route->Set(String::New("flags"), Integer::NewFromUnsigned(flags));
-    route->Set(String::New("refcnt"), Integer::New(refcnt));
-    route->Set(String::New("use"), Integer::NewFromUnsigned(use));
-    route->Set(String::New("metric"), Integer::New(metric));
-    route->Set(netmask_sym,
-               String::New(inet_ntop(AF_INET, &mask, buf, sizeof(buf))));
-    route->Set(mtu_sym, Integer::New(mtu));
-    route->Set(String::New("window"), Integer::NewFromUnsigned(window));
-    route->Set(rtt_sym, Integer::NewFromUnsigned(rtt));
+    Local<Object> route = NanNew<Object>();
+    route->Set(NanNew<String>("interface"),
+               NanNew<String>(reinterpret_cast<const char*>(iface)));
+    route->Set(NanNew<String>("destination"),
+               NanNew<String>(inet_ntop(AF_INET, &dst, buf, sizeof(buf))));
+    route->Set(NanNew<String>("gateway"),
+               NanNew<String>(inet_ntop(AF_INET, &gateway, buf, sizeof(buf))));
+    route->Set(NanNew<String>("flags"), NanNew<Int32>(flags));
+    route->Set(NanNew<String>("refcnt"), NanNew<Int32>(refcnt));
+    route->Set(NanNew<String>("use"), NanNew<Int32>(use));
+    route->Set(NanNew<String>("metric"), NanNew<Int32>(metric));
+    route->Set(NanNew<String>("netmask"),
+               NanNew<String>(inet_ntop(AF_INET, &mask, buf, sizeof(buf))));
+    route->Set(NanNew<String>("mtu"), NanNew<Int32>(mtu));
+    route->Set(NanNew<String>("window"), NanNew<Int32>(window));
+    route->Set(NanNew<String>("rtt"), NanNew<Int32>(rtt));
     routes->Set(routes->Length(), route);
   }
 
   fclose(fp);
 
-  return scope.Close(routes);
+  return true;
 }
 
 
-Handle<Value> GetRoutesIPv6() {
-  HandleScope scope;
-  Local<Array> routes = Array::New();
-
+static bool GetRoutesIPv6(Handle<Array> routes) {
   FILE* fp = fopen("/proc/net/ipv6_route", "r");
-  if (fp == NULL) return scope.Close(routes);
+  if (fp == NULL) return false;
 
   while (!feof(fp)) {
     char dst[256];
@@ -170,28 +156,28 @@ Handle<Value> GetRoutesIPv6() {
     inet_ntop(AF_INET6, &gateway, buf, sizeof(buf));
     snprintf(gateway, sizeof(gateway), "%s", buf);
 
-    Local<Object> route = Object::New();
-    route->Set(dest_sym, String::New(dst));
-    route->Set(String::New("source"), String::New(src));
-    route->Set(gateway_sym, String::New(gateway));
-    route->Set(String::New("metric"), Integer::New(metric));
-    route->Set(String::New("refcnt"), Integer::NewFromUnsigned(refcnt));
-    route->Set(String::New("use"), Integer::NewFromUnsigned(use));
-    route->Set(String::New("flags"), Integer::NewFromUnsigned(flags));
-    route->Set(interface_sym,
-               String::New(reinterpret_cast<const char*>(iface)));
+    Local<Object> route = NanNew<Object>();
+    route->Set(NanNew<String>("destination"), NanNew<String>(dst));
+    route->Set(NanNew<String>("source"), NanNew<String>(src));
+    route->Set(NanNew<String>("gateway"), NanNew<String>(gateway));
+    route->Set(NanNew<String>("metric"), NanNew<Int32>(metric));
+    route->Set(NanNew<String>("refcnt"), NanNew<Int32>(refcnt));
+    route->Set(NanNew<String>("use"), NanNew<Int32>(use));
+    route->Set(NanNew<String>("flags"), NanNew<Int32>(flags));
+    route->Set(NanNew<String>("interface"),
+               NanNew<String>(reinterpret_cast<const char*>(iface)));
     routes->Set(routes->Length(), route);
   }
 
   fclose(fp);
 
-  return scope.Close(routes);
+  return true;
 }
 
 
-Handle<Value> GetInfo(int family) {
-  if (family == AF_INET) return GetRoutesIPv4();
-  if (family == AF_INET6) return GetRoutesIPv6();
+bool GetInfo(int family, Handle<Array> result) {
+  if (family == AF_INET) return GetRoutesIPv4(result);
+  if (family == AF_INET6) return GetRoutesIPv6(result);
   abort();
 }
 
