@@ -50,7 +50,7 @@ void Hex2Bin(char* buf, unsigned int len) {
 }
 
 
-static bool GetRoutesIPv4(Handle<Value> routes) {
+static bool GetRoutesIPv4(Handle<Array> routes) {
   FILE* fp = fopen("/proc/net/route", "r");
   if (fp == NULL) return false;
 
