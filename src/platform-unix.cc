@@ -96,9 +96,9 @@ bool GetInfo(int family, Handle<Array> result) {
     }
 
     // Put metrics
-    info->Set(NanNew<String>("mtu"), NanNew<Int32>(msg->rtm_rmx.rmx_mtu));
-    info->Set(NanNew<String>("rtt"), NanNew<Int32>(msg->rtm_rmx.rmx_rtt));
-    info->Set(NanNew<String>("expire"), NanNew<Int32>(msg->rtm_rmx.rmx_expire));
+    info->Set(NanNew<String>("mtu"), NanNew<Number>(msg->rtm_rmx.rmx_mtu));
+    info->Set(NanNew<String>("rtt"), NanNew<Number>(msg->rtm_rmx.rmx_rtt));
+    info->Set(NanNew<String>("expire"), NanNew<Number>(msg->rtm_rmx.rmx_expire));
 
     // Put interface name
     char iface[IFNAMSIZ];

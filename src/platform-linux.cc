@@ -95,15 +95,15 @@ static bool GetRoutesIPv4(Handle<Array> routes) {
                NanNew<String>(inet_ntop(AF_INET, &dst, buf, sizeof(buf))));
     route->Set(NanNew<String>("gateway"),
                NanNew<String>(inet_ntop(AF_INET, &gateway, buf, sizeof(buf))));
-    route->Set(NanNew<String>("flags"), NanNew<Int32>(flags));
-    route->Set(NanNew<String>("refcnt"), NanNew<Int32>(refcnt));
-    route->Set(NanNew<String>("use"), NanNew<Int32>(use));
-    route->Set(NanNew<String>("metric"), NanNew<Int32>(metric));
+    route->Set(NanNew<String>("flags"), NanNew<Number>(flags));
+    route->Set(NanNew<String>("refcnt"), NanNew<Number>(refcnt));
+    route->Set(NanNew<String>("use"), NanNew<Number>(use));
+    route->Set(NanNew<String>("metric"), NanNew<Number>(metric));
     route->Set(NanNew<String>("netmask"),
                NanNew<String>(inet_ntop(AF_INET, &mask, buf, sizeof(buf))));
-    route->Set(NanNew<String>("mtu"), NanNew<Int32>(mtu));
-    route->Set(NanNew<String>("window"), NanNew<Int32>(window));
-    route->Set(NanNew<String>("rtt"), NanNew<Int32>(rtt));
+    route->Set(NanNew<String>("mtu"), NanNew<Number>(mtu));
+    route->Set(NanNew<String>("window"), NanNew<Number>(window));
+    route->Set(NanNew<String>("rtt"), NanNew<Number>(rtt));
     routes->Set(routes->Length(), route);
   }
 
@@ -160,10 +160,10 @@ static bool GetRoutesIPv6(Handle<Array> routes) {
     route->Set(NanNew<String>("destination"), NanNew<String>(dst));
     route->Set(NanNew<String>("source"), NanNew<String>(src));
     route->Set(NanNew<String>("gateway"), NanNew<String>(gateway));
-    route->Set(NanNew<String>("metric"), NanNew<Int32>(metric));
-    route->Set(NanNew<String>("refcnt"), NanNew<Int32>(refcnt));
-    route->Set(NanNew<String>("use"), NanNew<Int32>(use));
-    route->Set(NanNew<String>("flags"), NanNew<Int32>(flags));
+    route->Set(NanNew<String>("metric"), NanNew<Number>(metric));
+    route->Set(NanNew<String>("refcnt"), NanNew<Number>(refcnt));
+    route->Set(NanNew<String>("use"), NanNew<Number>(use));
+    route->Set(NanNew<String>("flags"), NanNew<Number>(flags));
     route->Set(NanNew<String>("interface"),
                NanNew<String>(reinterpret_cast<const char*>(iface)));
     routes->Set(routes->Length(), route);
