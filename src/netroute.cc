@@ -15,28 +15,28 @@ using namespace v8;
 using namespace node;
 
 static NAN_METHOD(GetInfo) {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
 
-  Local<Object> result = NanNew<Object>();
-  Local<Array> ipv4 = NanNew<Array>();
-  Local<Array> ipv6 = NanNew<Array>();
+  Local<Object> result = Nan::New<Object>();
+  Local<Array> ipv4 = Nan::New<Array>();
+  Local<Array> ipv6 = Nan::New<Array>();
 
   if (!GetInfo(AF_INET, ipv4))
-    NanReturnUndefined();
+    return;
   if (!GetInfo(AF_INET6, ipv6))
-    NanReturnUndefined();
+    return;
 
-  result->Set(NanNew<String>("IPv4"), ipv4);
-  result->Set(NanNew<String>("IPv6"), ipv6);
+  result->Set(Nan::New<String>("IPv4").ToLocalChecked(), ipv4);
+  result->Set(Nan::New<String>("IPv6").ToLocalChecked(), ipv6);
 
-  NanReturnValue(result);
+  info.GetReturnValue().Set(result);
 }
 
 
 static void Init(Handle<Object> target) {
-  NanScope();
+  Nan::HandleScope scope;
 
-  NODE_SET_METHOD(target, "getInfo", GetInfo);
+  Nan::SetMethod(target, "getInfo", GetInfo);
 }
 
 NODE_MODULE(netroute, Init);
