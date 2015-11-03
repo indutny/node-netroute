@@ -88,22 +88,22 @@ static bool GetRoutesIPv4(Handle<Array> routes) {
       break;
 
     char buf[256];
-    Local<Object> route = NanNew<Object>();
-    route->Set(NanNew<String>("interface"),
-               NanNew<String>(reinterpret_cast<const char*>(iface)));
-    route->Set(NanNew<String>("destination"),
-               NanNew<String>(inet_ntop(AF_INET, &dst, buf, sizeof(buf))));
-    route->Set(NanNew<String>("gateway"),
-               NanNew<String>(inet_ntop(AF_INET, &gateway, buf, sizeof(buf))));
-    route->Set(NanNew<String>("flags"), NanNew<Int32>(flags));
-    route->Set(NanNew<String>("refcnt"), NanNew<Int32>(refcnt));
-    route->Set(NanNew<String>("use"), NanNew<Int32>(use));
-    route->Set(NanNew<String>("metric"), NanNew<Int32>(metric));
-    route->Set(NanNew<String>("netmask"),
-               NanNew<String>(inet_ntop(AF_INET, &mask, buf, sizeof(buf))));
-    route->Set(NanNew<String>("mtu"), NanNew<Int32>(mtu));
-    route->Set(NanNew<String>("window"), NanNew<Int32>(window));
-    route->Set(NanNew<String>("rtt"), NanNew<Int32>(rtt));
+    Local<Object> route = Nan::New<Object>();
+    route->Set(Nan::New<String>("interface").ToLocalChecked(),
+               Nan::New<String>(reinterpret_cast<const char*>(iface).ToLocalChecked()));
+    route->Set(Nan::New<String>("destination").ToLocalChecked(),
+               Nan::New<String>(inet_ntop(AF_INET, &dst, buf, sizeof(buf).ToLocalChecked())));
+    route->Set(Nan::New<String>("gateway").ToLocalChecked(),
+               Nan::New<String>(inet_ntop(AF_INET, &gateway, buf, sizeof(buf).ToLocalChecked())));
+    route->Set(Nan::New<String>("flags").ToLocalChecked(), Nan::New<Number>(flags));
+    route->Set(Nan::New<String>("refcnt").ToLocalChecked(), Nan::New<Number>(refcnt));
+    route->Set(Nan::New<String>("use").ToLocalChecked(), Nan::New<Number>(use));
+    route->Set(Nan::New<String>("metric").ToLocalChecked(), Nan::New<Number>(metric));
+    route->Set(Nan::New<String>("netmask").ToLocalChecked(),
+               Nan::New<String>(inet_ntop(AF_INET, &mask, buf, sizeof(buf).ToLocalChecked())));
+    route->Set(Nan::New<String>("mtu").ToLocalChecked(), Nan::New<Number>(mtu));
+    route->Set(Nan::New<String>("window").ToLocalChecked(), Nan::New<Number>(window));
+    route->Set(Nan::New<String>("rtt").ToLocalChecked(), Nan::New<Number>(rtt));
     routes->Set(routes->Length(), route);
   }
 
@@ -156,16 +156,16 @@ static bool GetRoutesIPv6(Handle<Array> routes) {
     inet_ntop(AF_INET6, &gateway, buf, sizeof(buf));
     snprintf(gateway, sizeof(gateway), "%s", buf);
 
-    Local<Object> route = NanNew<Object>();
-    route->Set(NanNew<String>("destination"), NanNew<String>(dst));
-    route->Set(NanNew<String>("source"), NanNew<String>(src));
-    route->Set(NanNew<String>("gateway"), NanNew<String>(gateway));
-    route->Set(NanNew<String>("metric"), NanNew<Int32>(metric));
-    route->Set(NanNew<String>("refcnt"), NanNew<Int32>(refcnt));
-    route->Set(NanNew<String>("use"), NanNew<Int32>(use));
-    route->Set(NanNew<String>("flags"), NanNew<Int32>(flags));
-    route->Set(NanNew<String>("interface"),
-               NanNew<String>(reinterpret_cast<const char*>(iface)));
+    Local<Object> route = Nan::New<Object>();
+    route->Set(Nan::New<String>("destination").ToLocalChecked(), Nan::New<String>(dst).ToLocalChecked());
+    route->Set(Nan::New<String>("source").ToLocalChecked(), Nan::New<String>(src).ToLocalChecked());
+    route->Set(Nan::New<String>("gateway").ToLocalChecked(), Nan::New<String>(gateway).ToLocalChecked());
+    route->Set(Nan::New<String>("metric").ToLocalChecked(), Nan::New<Number>(metric));
+    route->Set(Nan::New<String>("refcnt").ToLocalChecked(), Nan::New<Number>(refcnt));
+    route->Set(Nan::New<String>("use").ToLocalChecked(), Nan::New<Number>(use));
+    route->Set(Nan::New<String>("flags").ToLocalChecked(), Nan::New<Number>(flags));
+    route->Set(Nan::New<String>("interface").ToLocalChecked(),
+               Nan::New<String>(reinterpret_cast<const char*>(iface).ToLocalChecked()));
     routes->Set(routes->Length(), route);
   }
 
