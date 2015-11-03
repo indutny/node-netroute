@@ -90,20 +90,20 @@ static bool GetRoutesIPv4(Handle<Array> routes) {
     char buf[256];
     Local<Object> route = Nan::New<Object>();
     route->Set(Nan::New<String>("interface").ToLocalChecked(),
-               Nan::New<String>(reinterpret_cast<const char*>(iface).ToLocalChecked()));
+               Nan::New<String>(iface).ToLocalChecked());
     route->Set(Nan::New<String>("destination").ToLocalChecked(),
-               Nan::New<String>(inet_ntop(AF_INET, &dst, buf, sizeof(buf).ToLocalChecked())));
+               Nan::New<String>(inet_ntop(AF_INET, &dst, buf, sizeof(buf))).ToLocalChecked());
     route->Set(Nan::New<String>("gateway").ToLocalChecked(),
-               Nan::New<String>(inet_ntop(AF_INET, &gateway, buf, sizeof(buf).ToLocalChecked())));
-    route->Set(Nan::New<String>("flags").ToLocalChecked(), Nan::New<Number>(flags));
-    route->Set(Nan::New<String>("refcnt").ToLocalChecked(), Nan::New<Number>(refcnt));
-    route->Set(Nan::New<String>("use").ToLocalChecked(), Nan::New<Number>(use));
-    route->Set(Nan::New<String>("metric").ToLocalChecked(), Nan::New<Number>(metric));
+               Nan::New<String>(inet_ntop(AF_INET, &gateway, buf, sizeof(buf))).ToLocalChecked());
+    route->Set(Nan::New<String>("flags").ToLocalChecked(), Nan::New<Int32>(flags));
+    route->Set(Nan::New<String>("refcnt").ToLocalChecked(), Nan::New<Int32>(refcnt));
+    route->Set(Nan::New<String>("use").ToLocalChecked(), Nan::New<Int32>(use));
+    route->Set(Nan::New<String>("metric").ToLocalChecked(), Nan::New<Int32>(metric));
     route->Set(Nan::New<String>("netmask").ToLocalChecked(),
-               Nan::New<String>(inet_ntop(AF_INET, &mask, buf, sizeof(buf).ToLocalChecked())));
-    route->Set(Nan::New<String>("mtu").ToLocalChecked(), Nan::New<Number>(mtu));
-    route->Set(Nan::New<String>("window").ToLocalChecked(), Nan::New<Number>(window));
-    route->Set(Nan::New<String>("rtt").ToLocalChecked(), Nan::New<Number>(rtt));
+               Nan::New<String>(inet_ntop(AF_INET, &mask, buf, sizeof(buf))).ToLocalChecked());
+    route->Set(Nan::New<String>("mtu").ToLocalChecked(), Nan::New<Int32>(mtu));
+    route->Set(Nan::New<String>("window").ToLocalChecked(), Nan::New<Int32>(window));
+    route->Set(Nan::New<String>("rtt").ToLocalChecked(), Nan::New<Int32>(rtt));
     routes->Set(routes->Length(), route);
   }
 
@@ -160,12 +160,12 @@ static bool GetRoutesIPv6(Handle<Array> routes) {
     route->Set(Nan::New<String>("destination").ToLocalChecked(), Nan::New<String>(dst).ToLocalChecked());
     route->Set(Nan::New<String>("source").ToLocalChecked(), Nan::New<String>(src).ToLocalChecked());
     route->Set(Nan::New<String>("gateway").ToLocalChecked(), Nan::New<String>(gateway).ToLocalChecked());
-    route->Set(Nan::New<String>("metric").ToLocalChecked(), Nan::New<Number>(metric));
-    route->Set(Nan::New<String>("refcnt").ToLocalChecked(), Nan::New<Number>(refcnt));
-    route->Set(Nan::New<String>("use").ToLocalChecked(), Nan::New<Number>(use));
-    route->Set(Nan::New<String>("flags").ToLocalChecked(), Nan::New<Number>(flags));
+    route->Set(Nan::New<String>("metric").ToLocalChecked(), Nan::New<Int32>(metric));
+    route->Set(Nan::New<String>("refcnt").ToLocalChecked(), Nan::New<Int32>(refcnt));
+    route->Set(Nan::New<String>("use").ToLocalChecked(), Nan::New<Int32>(use));
+    route->Set(Nan::New<String>("flags").ToLocalChecked(), Nan::New<Int32>(flags));
     route->Set(Nan::New<String>("interface").ToLocalChecked(),
-               Nan::New<String>(reinterpret_cast<const char*>(iface).ToLocalChecked()));
+               Nan::New<String>(iface).ToLocalChecked());
     routes->Set(routes->Length(), route);
   }
 
