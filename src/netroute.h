@@ -5,7 +5,7 @@
 
 namespace netroute {
 
-bool GetInfo(int family, v8::Handle<v8::Array> result);
+bool GetInfo(int family, v8::Local<v8::Array> result);
 
 } // namespace netroute
 

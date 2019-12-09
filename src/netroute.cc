@@ -26,14 +26,14 @@ static NAN_METHOD(GetInfo) {
   if (!GetInfo(AF_INET6, ipv6))
     return;
 
-  result->Set(Nan::New<String>("IPv4").ToLocalChecked(), ipv4);
-  result->Set(Nan::New<String>("IPv6").ToLocalChecked(), ipv6);
+  Nan::Set(result, Nan::New<String>("IPv4").ToLocalChecked(), ipv4);
+  Nan::Set(result, Nan::New<String>("IPv6").ToLocalChecked(), ipv6);
 
   info.GetReturnValue().Set(result);
 }
 
 
-static void Init(Handle<Object> target) {
+static void Init(Local<Object> target) {
   Nan::HandleScope scope;
 
   Nan::SetMethod(target, "getInfo", GetInfo);

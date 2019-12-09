@@ -50,7 +50,7 @@ void Hex2Bin(char* buf, unsigned int len) {
 }
 
 
-static bool GetRoutesIPv4(Handle<Array> routes) {
+static bool GetRoutesIPv4(Local<Array> routes) {
   FILE* fp = fopen("/proc/net/route", "r");
   if (fp == NULL) return false;
 
@@ -113,7 +113,7 @@ static bool GetRoutesIPv4(Handle<Array> routes) {
 }
 
 
-static bool GetRoutesIPv6(Handle<Array> routes) {
+static bool GetRoutesIPv6(Local<Array> routes) {
   FILE* fp = fopen("/proc/net/ipv6_route", "r");
   if (fp == NULL) return false;
 
@@ -175,7 +175,7 @@ static bool GetRoutesIPv6(Handle<Array> routes) {
 }
 
 
-bool GetInfo(int family, Handle<Array> result) {
+bool GetInfo(int family, Local<Array> result) {
   if (family == AF_INET) return GetRoutesIPv4(result);
   if (family == AF_INET6) return GetRoutesIPv6(result);
   abort();

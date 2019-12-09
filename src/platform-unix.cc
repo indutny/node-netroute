@@ -15,7 +15,7 @@ namespace netroute {
 using namespace node;
 using namespace v8;
 
-bool GetInfo(int family, Handle<Array> result) {
+bool GetInfo(int family, Local<Array> result) {
   int mib[6] = { CTL_NET, PF_ROUTE, 0, family, NET_RT_DUMP, 0 };
   size_t size;
   char* addresses;
@@ -92,21 +92,21 @@ bool GetInfo(int family, Handle<Array> result) {
       } else {
         uv_ip4_name(addr, out, sizeof(out));
       }
-      info->Set(keys[j], Nan::New<String>(out).ToLocalChecked());
+      Nan::Set(info, keys[j], Nan::New<String>(out).ToLocalChecked());
     }
 
     // Put metrics
-    info->Set(Nan::New<String>("mtu").ToLocalChecked(), Nan::New<Number>(msg->rtm_rmx.rmx_mtu));
-    info->Set(Nan::New<String>("rtt").ToLocalChecked(), Nan::New<Number>(msg->rtm_rmx.rmx_rtt));
-    info->Set(Nan::New<String>("expire").ToLocalChecked(), Nan::New<Number>(msg->rtm_rmx.rmx_expire));
+    Nan::Set(info, Nan::New<String>("mtu").ToLocalChecked(), Nan::New<Number>(msg->rtm_rmx.rmx_mtu));
+    Nan::Set(info, Nan::New<String>("rtt").ToLocalChecked(), Nan::New<Number>(msg->rtm_rmx.rmx_rtt));
+    Nan::Set(info, Nan::New<String>("expire").ToLocalChecked(), Nan::New<Number>(msg->rtm_rmx.rmx_expire));
 
     // Put interface name
     char iface[IFNAMSIZ];
     if_indextoname(msg->rtm_index, iface);
-    info->Set(Nan::New<String>("interface").ToLocalChecked(), Nan::New<String>(iface).ToLocalChecked());
+    Nan::Set(info, Nan::New<String>("interface").ToLocalChecked(), Nan::New<String>(iface).ToLocalChecked());
 
     // And put object into resulting array
-    result->Set(i, info);
+    Nan::Set(result, i, info);
     current += msg->rtm_msglen;
     i++;
   }
